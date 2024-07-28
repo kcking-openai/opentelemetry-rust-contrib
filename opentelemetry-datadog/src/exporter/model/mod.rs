@@ -199,9 +199,8 @@ pub(crate) mod tests {
     use opentelemetry_sdk::{
         self,
         trace::{SpanEvents, SpanLinks},
-        InstrumentationLibrary, Resource,
+        InstrumentationLibrary,
     };
-    use std::borrow::Cow;
     use std::time::{Duration, SystemTime};
 
     fn get_traces() -> Vec<Vec<trace::SpanData>> {
@@ -223,7 +222,6 @@ pub(crate) mod tests {
         let attributes = vec![KeyValue::new("span.type", "web")];
         let events = SpanEvents::default();
         let links = SpanLinks::default();
-        let resource = Resource::new(vec![KeyValue::new("host.name", "test")]);
         let instrumentation_lib = InstrumentationLibrary::builder("component").build();
 
         trace::SpanData {
@@ -238,7 +236,6 @@ pub(crate) mod tests {
             events,
             links,
             status: Status::Ok,
-            resource: Cow::Owned(resource),
             instrumentation_lib,
         }
     }
@@ -257,10 +254,14 @@ pub(crate) mod tests {
             &UnifiedTags::new(),
         )?);
 
-        assert_eq!(encoded.as_str(), "kZGMpHR5cGWjd2Vip3NlcnZpY2Wsc2VydmljZV9uYW1lpG5hbWWpY29tcG9uZW\
-        50qHJlc291cmNlqHJlc291cmNlqHRyYWNlX2lkzwAAAAAAAAAHp3NwYW5faWTPAAAAAAAAAGOpcGFyZW50X2lkzwAAAA\
-        AAAAABpXN0YXJ00wAAAAAAAAAAqGR1cmF0aW9u0wAAAAA7msoApWVycm9y0gAAAACkbWV0YYKpaG9zdC5uYW1lpHRlc3\
-        Spc3Bhbi50eXBlo3dlYqdtZXRyaWNzgbVfc2FtcGxpbmdfcHJpb3JpdHlfdjHLAAAAAAAAAAA=");
+        assert_eq!(
+            encoded.as_str(),
+            "kZGMpHR5cGWjd2Vip3NlcnZpY2Wsc2VydmljZV9uYW1lpG5hbWWpY29tcG9uZW\
+            50qHJlc291cmNlqHJlc291cmNlqHRyYWNlX2lkzwAAAAAAAAAHp3NwYW5faWTPA\
+            AAAAAAAAGOpcGFyZW50X2lkzwAAAAAAAAABpXN0YXJ00wAAAAAAAAAAqGR1cmF0\
+            aW9u0wAAAAA7msoApWVycm9y0gAAAACkbWV0YYGpc3Bhbi50eXBlo3dlYqdtZXR\
+            yaWNzgbVfc2FtcGxpbmdfcHJpb3JpdHlfdjHLAAAAAAAAAAA="
+        );
 
         Ok(())
     }

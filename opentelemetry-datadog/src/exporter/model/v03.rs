@@ -95,14 +95,9 @@ where
             )?;
 
             rmp::encode::write_str(&mut encoded, "meta")?;
-            rmp::encode::write_map_len(
-                &mut encoded,
-                (span.attributes.len() + span.resource.len()) as u32,
-            )?;
-            for (key, value) in span.resource.iter() {
-                rmp::encode::write_str(&mut encoded, key.as_str())?;
-                rmp::encode::write_str(&mut encoded, value.as_str().as_ref())?;
-            }
+            // TODO: add resource attributes back
+            // https://github.com/open-telemetry/opentelemetry-rust/blob/cd59346af5ddc94a308c7c5b66058c84095fc8f4/opentelemetry-sdk/CHANGELOG.md?plain=1#L48
+            rmp::encode::write_map_len(&mut encoded, (span.attributes.len()) as u32)?;
             for kv in span.attributes.iter() {
                 rmp::encode::write_str(&mut encoded, kv.key.as_str())?;
                 rmp::encode::write_str(&mut encoded, kv.value.as_str().as_ref())?;

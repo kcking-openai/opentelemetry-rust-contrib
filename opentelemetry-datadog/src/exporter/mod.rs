@@ -219,10 +219,9 @@ impl DatadogPipelineBuilder {
                 ));
                 cfg
             } else {
-                Config {
-                    resource: Cow::Owned(Resource::empty()),
-                    ..Default::default()
-                }
+                let mut cfg = Config::default();
+                cfg.resource = Cow::Owned(Resource::empty());
+                cfg
             };
             (config, service_name)
         } else {
@@ -231,14 +230,10 @@ impl DatadogPipelineBuilder {
                 .get(semcov::resource::SERVICE_NAME.into())
                 .unwrap()
                 .to_string();
-            (
-                Config {
-                    // use a empty resource to prevent TracerProvider to assign a service name.
-                    resource: Cow::Owned(Resource::empty()),
-                    ..Default::default()
-                },
-                service_name,
-            )
+            let mut cfg = Config::default();
+            // use a empty resource to prevent TracerProvider to assign a service name.
+            cfg.resource = Cow::Owned(Resource::empty());
+            (cfg, service_name)
         }
     }
 
